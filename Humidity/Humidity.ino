@@ -1,8 +1,13 @@
 #include "uFire_SHT20.h"
 uFire_SHT20 sht20;
 double currentT, previousT, elapsedT;;
-unsigned long timer;
-double counter;
+double starttime;
+double realtime;
+int count = 0;
+int times = 0;
+int timerMode = 0;
+double timertime = 0;
+double trigger = 1.50;
 
 void setup()
 {
@@ -18,14 +23,27 @@ void loop()
   elapsedT = currentT - previousT; 
   //Serial.print("previousT : "); Serial.println(previousT);
   previousT = currentT; // 1000;//Second in unit
-//  Serial.print("Correct T : "); Serial.println(elapsedT);
+  //Serial.print("Correct T : "); Serial.println(elapsedT);
   Serial.print((String)sht20.humidity());
   Serial.print(" , ");
-  Serial.println(elapsedT);
-  if(elapsedT >1.1){
-    counter = counter + 0.5;
-    Serial.print(" , ");
-    Serial.println(counter);
+  Serial.print(elapsedT);
+  
+  if ( times > 0 ){ 
+    if ( elapsedT >= trigger){
+      count++;
+      }
+} 
+
+  if ( count == 1){
+    starttime = millis();
+    timerMode++;
   }
-  delay(500);
+  
+  if (timerMode > 0){
+    timertime = (millis()- starttime)/1000;
+  }
+  Serial.print(" , ");
+  Serial.println(timertime);
+  times++;
+  delay(700);
 }
